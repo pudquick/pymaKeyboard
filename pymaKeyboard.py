@@ -33,7 +33,8 @@ extraKeys = {"return": 0x24, "tab": 0x30, "delete": 0x33, "escape": 0x35, \
 
 
 def typeLetter(singleChar):
-	global sourceRef, lowerKeys, upperKeys, modKeys
+	global sourceRef, lowerKeys, upperKeys, modKeys, extraKeys
+	niceToHave = {"\t": "tab", "\r": "return", "\n": "return"}
 	if (lowerKeys.has_key(singleChar)):
 		# Unmodified key
 		keyDown = qCG.CGEventCreateKeyboardEvent(sourceRef, lowerKeys[singleChar], True)
@@ -50,6 +51,12 @@ def typeLetter(singleChar):
 		qCG.CGEventPost(qCG.kCGHIDEventTap, keyUp)
 		shiftUp = qCG.CGEventCreateKeyboardEvent(sourceRef, modKeys["shift"], False)
 		qCG.CGEventPost(qCG.kCGHIDEventTap, shiftUp)
+	elif (niceToHave.has_key(singleChar)):
+		# Some nice keys to have standard support for
+		keyDown = qCG.CGEventCreateKeyboardEvent(sourceRef, extraKeys[niceToHave[singleChar]], True)
+		qCG.CGEventPost(qCG.kCGHIDEventTap, keyDown)
+		keyUp = qCG.CGEventCreateKeyboardEvent(sourceRef, extraKeys[niceToHave[singleChar]], False)
+		qCG.CGEventPost(qCG.kCGHIDEventTap, keyUp)
 	time.sleep(0.0008)
 
 def typeString(theString = None):
